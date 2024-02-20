@@ -114,11 +114,6 @@ export class UserService {
   }
   async getAllUser(page: number, limit: number) {
     const count = (await this.userRepo.findAll()).length;
-    const cachedData = await this.cacheService.get<User>('AllUsers');
-    if (cachedData) {
-      console.log('get from cached data');
-      return cachedData;
-    }
     const users = await this.helpers.paginate(this.userRepo, {
       page,
       limit,
@@ -237,6 +232,24 @@ export class UserService {
     } else {
       throw new ForbiddenException('Image is not defined');
     }
-    //return 'Image added to queue successfull';
+  }
+  async Follow(userId: string, targetUserId: string) {
+    const targerUser = await this.userRepo.findByPk(targetUserId);
+    if (!targerUser) {
+      throw new ForbiddenException('user is not found');
+    }
+    const user = await this.userRepo.findByPk(userId);
+    //@ts-expect-error
+    const Followers = await targerUser.Followers.concat(user.id);
+    //@ts-expect-error
+    const Followings = await user.Followings.concat(targerUser.id);
+    await targerUser.update({
+      Followers,
+    });
+    return {
+      data: await user.update({
+        Followings,
+      }),
+    };
   }
 }

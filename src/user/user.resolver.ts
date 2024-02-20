@@ -45,24 +45,6 @@ export class UserResolver {
     return await this.userService.getAllUser(page, limit);
   }
 
-  // @UseInterceptors(FileInterceptor('file', { storage: 'uploads/' }))
-  // @Bind(
-  //   UploadedFile(
-  //     new ParseFilePipeBuilder()
-  //       .addMaxSizeValidator({
-  //         maxSize: 5000,
-  //       })
-  //       .addFileTypeValidator({
-  //         fileType: 'jpeg/jpg/img/image',
-  //       })
-  //       .build(),
-  //   ),
-  // )
-  // @Query(() => )
-  // async uploadPhoto(file: Express.Multer.File) {
-  //   return await this.uploadImage.addImage(file);
-  // }
-  // FIXME
   @UseGuards(UserGuard)
   @Mutation(() => UserReponseString)
   async uploadImage(
@@ -145,7 +127,14 @@ export class UserResolver {
       user,
     );
   }
-
+  @UseGuards(UserGuard)
+  @Mutation(() => UserReponse)
+  async Follow(
+    @CurrentUser('id') userId: string,
+    @Args('targetUser', { type: () => String }) targetUserId: string,
+  ) {
+    return await this.userService.Follow(userId, targetUserId);
+  }
   // @ResolveField()
   // hasPassword(@Parent() user: User) {
   //   return !!user.password;

@@ -10,7 +10,7 @@ import {
 import { ObjectType, Field } from 'type-graphql';
 import { User } from './user.entity';
 
-@Table({ tableName: 'SecurityGroub' })
+@Table({ tableName: 'SecurityGroup' })
 @ObjectType()
 export class SecurityGroub extends Model {
   @PrimaryKey

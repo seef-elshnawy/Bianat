@@ -14,6 +14,7 @@ import { OTP } from 'src/otp/model/otp.model';
 import { Role } from '../user.enum';
 import { SecurityGroub } from './securityGroup.entity';
 import { Files } from './files.entity';
+import { Tweets } from 'src/tweets/entities/tweet.entity';
 
 @Table({ tableName: 'User' })
 @ObjectType()
@@ -55,4 +56,7 @@ export class User extends Model {
 
   @HasMany(() => Files, 'userId')
   Files: Files[];
+
+  @HasMany(() => Tweets, 'userId')
+  tweets: Tweets[];
 }
