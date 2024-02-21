@@ -18,6 +18,7 @@ import { BullModule } from '@nestjs/bull';
 import { ImageConsumer } from './user.consumer';
 import { producerService } from './user.producer';
 import { Files } from './entity/files.entity';
+import { UserRepo } from './user.repo';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { Files } from './entity/files.entity';
     UserGuard,
     ImageConsumer,
     producerService,
+    UserRepo,
   ],
   exports: [UserService, UserResolver, OtpService, ConfigService, UserGuard],
 })

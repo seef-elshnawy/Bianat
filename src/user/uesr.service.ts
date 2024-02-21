@@ -29,11 +29,12 @@ import { join } from 'path';
 import { FileUpload } from 'graphql-upload';
 import sharp from 'sharp';
 import { Files } from './entity/files.entity';
+import { UserRepo } from './user.repo';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User) private userRepo: typeof User,
+    private userRepo: UserRepo,
     @InjectModel(SecurityGroub) private primissonsRepo: typeof SecurityGroub,
     @InjectModel(Files) private filesRepo: typeof Files,
     private helpers: HelperService,
@@ -99,7 +100,7 @@ export class UserService {
     return user;
   }
   async removeUser(id: string) {
-    const user = await this.userRepo.destroy({ where: { id } });
+    const user = await this.userRepo.remove({ where: { id } });
     if (!user) {
       throw new ForbiddenException('user not found');
     }
@@ -114,22 +115,14 @@ export class UserService {
   }
   async getAllUser(page: number, limit: number) {
     const count = (await this.userRepo.findAll()).length;
-    const users = await this.helpers.paginate(this.userRepo, {
+    const users = await this.userRepo.findPaginate(page, limit, {
       page,
       limit,
       hasNext: count > page * limit,
       hasPrevious: page > 1,
       totalCount: count,
     });
-    console.log('get from database');
-    await this.cacheService.set('AllUsers', users);
     return users;
-  }
-
-  async findUserOrError(where: WhereOptions<User>, error?: string) {
-    const user = await this.userRepo.findOne({ where });
-    if (!user) throw new NotFoundException(error ?? 'User Not Found');
-    return user;
   }
 
   async validation(otp: OTP) {
