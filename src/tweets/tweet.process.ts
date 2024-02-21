@@ -8,29 +8,7 @@ import { Files } from 'src/user/entity/files.entity';
 
 @Processor('tweet')
 export class TweetProcess {
-  constructor(@InjectModel(Files) private fileRepo: typeof Files) {}
+  constructor() {}
   @Process('uploadImages')
-  async uploadImage(job: Job) {
-    await new Promise(async (res, rej) => {
-      job.data.createReadStream().pipe(
-        createWriteStream(
-          join(process.cwd(), `src/uploads/${job.data.filename}`),
-        )
-          .on('finish', async () => {
-            await this.fileRepo.create({
-              userId: job.data.userId,
-              fileLink: job.data.filename,
-            });
-            res(job.data.files.concat(job.data.filename));
-          })
-          .on('error', (err) => {
-            rej(
-              new ForbiddenException(
-                `couldn't save img ${job.data.filename} ${err}`,
-              ),
-            );
-          }),
-      );
-    });
-  }
+  async uploadImage(job: Job) {}
 }

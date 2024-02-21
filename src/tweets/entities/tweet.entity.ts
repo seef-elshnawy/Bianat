@@ -7,6 +7,7 @@ import {
   Table,
   HasOne,
   PrimaryKey,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { User } from 'src/user/entity/user.entity';
 
@@ -27,27 +28,23 @@ export class Tweets extends Model {
   @Field(() => String)
   tweet: string;
 
-  @Column({
-    type: DataType.UUID,
-  })
   @ForeignKey(() => User)
-  @Field(() => String)
+  @Column({ type: DataType.UUID })
   userId: string;
 
   @Column({
-    type: DataType.BOOLEAN,
-    defaultValue: false,
+    type: DataType.UUID,
   })
-  @Field(() => Boolean)
-  isReply: boolean;
+  @ForeignKey(() => Tweets)
+  @Field(() => String)
+  parentReply: string;
 
   @Column({
-    type: DataType.BOOLEAN,
-    defaultValue: false,
+    type: DataType.UUID,
   })
-  @Field(() => Boolean)
-  isRetweet: boolean;
-
+  @ForeignKey(() => Tweets)
+  @Field(() => String)
+  retweet: string;
   @Column({
     type: DataType.ARRAY(DataType.STRING),
     defaultValue: [],
@@ -56,11 +53,18 @@ export class Tweets extends Model {
   replies: string[];
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ARRAY(DataType.STRING),
+    defaultValue: [],
   })
-  @Field(() => String)
-  retweet: string;
+  @Field(() => Array(String))
+  Tweet_Images: string[];
 
-  @HasOne(() => User, 'userId')
+  @BelongsTo(() => User, 'userId')
   user: User;
+
+  @BelongsTo(() => Tweets, { foreignKey: 'parentReply', as: 'Reply' })
+  parent: Tweets;
+
+  @BelongsTo(() => Tweets, { foreignKey: 'retweet', as: 'parentRetweet' })
+  parentRetweet: Tweets;
 }

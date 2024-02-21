@@ -7,10 +7,11 @@ import { User } from 'src/user/entity/user.entity';
 import { HelpersModule } from 'src/common/utils/herlpers.modules';
 import { UserModule } from 'src/user/user.module';
 import { BullModule } from '@nestjs/bull';
+import { Files } from 'src/user/entity/files.entity';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Tweets, User]),
+    SequelizeModule.forFeature([Tweets, User, Files]),
     BullModule.registerQueue({
       configKey: 'config_queue',
       name: 'tweet',

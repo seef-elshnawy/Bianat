@@ -8,7 +8,7 @@ require('dotenv').config();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-  app.use(graphqlUploadExpress({ maxFileSize: 500000, maxFiles: 1 }));
+  app.use(graphqlUploadExpress({ maxFileSize: 500000, maxFiles: 6 }));
   await app.listen(8000);
 }
 bootstrap();

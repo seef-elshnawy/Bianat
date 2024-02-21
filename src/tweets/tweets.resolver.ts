@@ -20,7 +20,7 @@ export class TweetsResolver {
   constructor(private readonly tweetsService: TweetsService) {}
 
   @UseGuards(UserGuard)
-  @Mutation(() => Tweets)
+  @Mutation(() => TweetResponse)
   async createTweet(
     @Args('createTweetInput') createTweetInput: CreateTweetInput,
     @CurrentUser('id') userId: string,
@@ -75,22 +75,26 @@ export class TweetsResolver {
   @Mutation(() => TweetResponse)
   async addReply(
     @Args('createTweetInput') createTweetInput: CreateTweetInput,
+    @Args('tweetId', { type: () => String }) tweetId: string,
     @CurrentUser('id') userId: string,
   ) {
-    return await this.tweetsService.addReply(createTweetInput, userId);
+    return await this.tweetsService.addReply(createTweetInput, userId, tweetId);
   }
   @UseGuards(UserGuard)
   @Mutation(() => TweetResponse)
   async Retweet(
     @Args('createTweetInput') createTweetInput: CreateTweetInput,
+    @Args('tweetId', { type: () => String }) tweetId: string,
     @CurrentUser('id') userId: string,
   ) {
-    return await this.tweetsService.Retweet(createTweetInput, userId);
+    return await this.tweetsService.Retweet(createTweetInput, userId, tweetId);
   }
+
+  @UseGuards(UserGuard)
   @Mutation(() => TweetResponse)
   async addImageTweet(
     @Args('createTweetInput') createTweetInput: CreateTweetInput,
-    @Args('Images', { type: () => GraphQLUpload }) Images: FileUpload[],
+    @Args('Images', { type: () => GraphQLUpload }) Images: FileUpload,
     @CurrentUser('id') userId: string,
   ) {
     return this.tweetsService.addImgTweet(createTweetInput, Images, userId);

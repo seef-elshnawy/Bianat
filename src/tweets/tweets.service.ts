@@ -12,16 +12,21 @@ import { join } from 'path';
 import { Files } from 'src/user/entity/files.entity';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class TweetsService {
   constructor(
     @InjectModel(Tweets) private tweetRepo: typeof Tweets,
     @InjectQueue('tweet') private addQueue: Queue,
+    @InjectModel(Files) private fileRepo: typeof Files,
     private helpers: HelperService,
   ) {}
   async addTweet(createTweetInput: CreateTweetInput, userId: string) {
-    const tweet = await this.tweetRepo.create({ createTweetInput, userId });
+    const tweet = await this.tweetRepo.create({
+      tweet: createTweetInput.tweet,
+      userId,
+    });
     return { data: tweet };
   }
 
@@ -85,56 +90,78 @@ export class TweetsService {
     await tweet.destroy();
     return { data: 'tweet deleted successfull' };
   }
-  async addReply(createTweetInput: CreateTweetInput, userId: string) {
+  async addReply(
+    createTweetInput: CreateTweetInput,
+    userId: string,
+    tweetId: string,
+  ) {
+    const tweetOrgin = await this.findOne(tweetId);
+
     const tweet = await this.tweetRepo.create({
-      createTweetInput,
+      tweet: createTweetInput.tweet,
       userId,
-      isReply: true,
+      parentReply: tweetOrgin.id,
     });
-    const tweetOrgin = await this.findOne(createTweetInput.tweetId);
     if (tweetOrgin) {
       const allReplies = tweetOrgin.replies.concat([tweet.id]);
+      await tweetOrgin.update({
+        replies: allReplies,
+      });
       return {
-        data: await tweetOrgin.update({
-          replies: allReplies,
-        }),
+        data: tweet,
       };
     }
   }
 
-  async Retweet(createTweetInput: CreateTweetInput, userId: string) {
-    const tweetOrgin = await this.findOne(createTweetInput.tweetId);
+  async Retweet(
+    createTweetInput: CreateTweetInput,
+    userId: string,
+    tweetId: string,
+  ) {
+    const tweetOrgin = await this.findOne(tweetId);
     const tweet = await this.tweetRepo.create({
-      createTweetInput,
+      tweet: createTweetInput.tweet,
       userId,
-      isRetweet: true,
-      retweets: tweetOrgin.id,
+      retweet: tweetOrgin.id,
     });
+    await tweetOrgin.increment('retweet_counter', { by: 1 });
     return { data: tweet };
   }
   async addImgTweet(
     createTweetInput: CreateTweetInput,
-    Image: FileUpload[],
+    Image: FileUpload,
     userId: string,
   ) {
-    let files = [];
-    Image.map(async (l) => {
-      const { filename, createReadStream } = l;
-      const newFileName = filename.replace(
-        filename.split('.')[0],
-        `${filename.split('.')[0]}${Date.now()}`,
+    console.log(Image);
+    // console.log(l[3]);
+    const { filename, createReadStream } = Image;
+    console.log(filename.split('.')[0].split('-')[0]);
+    const newFileName = filename.replace(
+      filename.split('.')[0],
+      `${filename.split('.')[0].split('-')[0]}-${Date.now()}`,
+    );
+    return await new Promise(async (res, rej) => {
+      createReadStream().pipe(
+        createWriteStream(join(process.cwd(), `src/uploads/${newFileName}`))
+          .on('finish', async () => {
+            await this.fileRepo.create({
+              userId: userId,
+              fileLink: newFileName,
+            });
+            const tweet = await this.tweetRepo.create({
+              tweet: createTweetInput.tweet,
+              Tweet_Images: [newFileName],
+            });
+            res({
+              data: tweet,
+            });
+          })
+          .on('error', (err) => {
+            rej(
+              new ForbiddenException(`couldn't save img ${newFileName} ${err}`),
+            );
+          }),
       );
-      this.addQueue.add('uploadImages', {
-        filename: newFileName,
-        createReadStream,
-        userId,
-        files,
-      });
-    });
-    console.log(files);
-    return await this.tweetRepo.create({
-      createTweetInput,
-      Tweet_Images: files,
     });
   }
 }
