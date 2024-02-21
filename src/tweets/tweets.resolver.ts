@@ -23,9 +23,10 @@ export class TweetsResolver {
   @Mutation(() => TweetResponse)
   async createTweet(
     @Args('createTweetInput') createTweetInput: CreateTweetInput,
+    @Args('hashtag', { type: () => Array(String) }) hashtag: string[] = null,
     @CurrentUser('id') userId: string,
   ) {
-    return await this.tweetsService.addTweet(createTweetInput, userId);
+    return await this.tweetsService.addTweet(createTweetInput, userId, hashtag);
   }
 
   @UseGuards(UserGuard)

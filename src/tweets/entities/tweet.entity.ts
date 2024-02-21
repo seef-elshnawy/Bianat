@@ -8,8 +8,12 @@ import {
   HasOne,
   PrimaryKey,
   BelongsTo,
+  HasMany,
+  BelongsToMany,
 } from 'sequelize-typescript';
 import { User } from 'src/user/entity/user.entity';
+import { Hashtag } from './hashtag.entity';
+import { TweetHashtag } from './tweetHash.entity';
 
 @Table({ tableName: 'Tweets' })
 @ObjectType()
@@ -67,4 +71,7 @@ export class Tweets extends Model {
 
   @BelongsTo(() => Tweets, { foreignKey: 'retweet', as: 'parentRetweet' })
   parentRetweet: Tweets;
+
+  @BelongsToMany(() => Hashtag, () => TweetHashtag)
+  HashTags: Hashtag[];
 }

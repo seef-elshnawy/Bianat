@@ -24,6 +24,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { Files } from './user/entity/files.entity';
 import { TweetsModule } from './tweets/tweets.module';
 import { Tweets } from './tweets/entities/tweet.entity';
+import { Hashtag } from './tweets/entities/hashtag.entity';
+import { TweetHashtag } from './tweets/entities/tweetHash.entity';
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -45,7 +47,7 @@ import { Tweets } from './tweets/entities/tweet.entity';
     }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
-      models: [User, OTP, SecurityGroub, Files, Tweets],
+      models: [User, OTP, SecurityGroub, Files, Tweets, Hashtag, TweetHashtag],
       autoLoadModels: false,
       synchronize: false,
       username: 'postgres',

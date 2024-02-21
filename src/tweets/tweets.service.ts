@@ -13,6 +13,7 @@ import { Files } from 'src/user/entity/files.entity';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { Op } from 'sequelize';
+import { Hashtag } from './entities/hashtag.entity';
 
 @Injectable()
 export class TweetsService {
@@ -20,14 +21,38 @@ export class TweetsService {
     @InjectModel(Tweets) private tweetRepo: typeof Tweets,
     @InjectQueue('tweet') private addQueue: Queue,
     @InjectModel(Files) private fileRepo: typeof Files,
+    @InjectModel(Hashtag) private hashTag: typeof Hashtag,
     private helpers: HelperService,
   ) {}
-  async addTweet(createTweetInput: CreateTweetInput, userId: string) {
-    const tweet = await this.tweetRepo.create({
-      tweet: createTweetInput.tweet,
-      userId,
-    });
-    return { data: tweet };
+  async addTweet(
+    createTweetInput: CreateTweetInput,
+    userId: string,
+    hashtag: string[],
+  ) {
+    if (hashtag !== null) {
+      try {
+        const tweet = await this.tweetRepo.create({
+          tweet: createTweetInput.tweet,
+          userId,
+        });
+        hashtag.map(async (l) => {
+          console.log(l);
+          const HashTag = await this.hashTag.create({
+            HashTag: l,
+          });
+          HashTag.$add('tweetId', tweet.id);
+        });
+        return { data: tweet };
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      const tweet = await this.tweetRepo.create({
+        tweet: createTweetInput.tweet,
+        userId,
+      });
+      return { data: tweet };
+    }
   }
 
   async findAll(page: number, limit: number) {
