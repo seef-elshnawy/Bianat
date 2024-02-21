@@ -4,10 +4,11 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Files } from 'src/user/entity/files.entity';
 import { BullModule } from '@nestjs/bull';
 import { CronProcessor } from './schedule.consumer';
+import { User } from 'src/user/entity/user.entity';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Files]),
+    SequelizeModule.forFeature([Files, User]),
     BullModule.registerQueue({
       configKey: 'config_queue',
       name: 'Cron',

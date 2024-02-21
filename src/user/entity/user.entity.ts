@@ -48,6 +48,27 @@ export class User extends Model {
   @Field({ nullable: true })
   invalidEmail: string;
 
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    defaultValue: [],
+  })
+  @Field(() => Array(String))
+  Followers: string[];
+
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    defaultValue: [],
+  })
+  @Field(() => Array(String))
+  Followings: string[];
+
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    defaultValue: [],
+  })
+  @Field(() => Array(String))
+  Hobbies: string[];
+
   @HasMany(() => OTP, 'userId')
   otp: OTP[];
 

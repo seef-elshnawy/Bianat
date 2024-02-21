@@ -8,7 +8,7 @@ import { Files } from 'src/user/entity/files.entity';
 @Processor('Cron')
 export class CronProcessor {
   constructor(@InjectModel(Files) private fileRepo: typeof Files) {}
-  @Process('uploadFiles')
+  @Process('deleteFiles')
   async uploadFiles(job: Job<{ files: Files[] }>) {
     job.data.files.map((l) => {
       unlink(

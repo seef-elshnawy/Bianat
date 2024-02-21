@@ -18,7 +18,7 @@ export class UserRepo extends User {
     });
     return { data: users, pagination };
   }
-  async findAll(): Promise<User[]> {
+  async findAll() {
     return await this.model.findAll();
   }
 

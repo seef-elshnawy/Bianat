@@ -135,6 +135,14 @@ export class UserResolver {
   ) {
     return await this.userService.Follow(userId, targetUserId);
   }
+  @UseGuards(UserGuard)
+  @Mutation(() => UserReponse)
+  async addHobbies(
+    @CurrentUser('id') userId: string,
+    @Args('hobbie', { type: () => String }) hobbie: string,
+  ) {
+    return await this.userService.addHobbies(hobbie, userId);
+  }
   // @ResolveField()
   // hasPassword(@Parent() user: User) {
   //   return !!user.password;

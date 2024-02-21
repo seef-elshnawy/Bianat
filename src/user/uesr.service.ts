@@ -232,10 +232,8 @@ export class UserService {
       throw new ForbiddenException('user is not found');
     }
     const user = await this.userRepo.findByPk(userId);
-    //@ts-expect-error
-    const Followers = await targerUser.Followers.concat(user.id);
-    //@ts-expect-error
-    const Followings = await user.Followings.concat(targerUser.id);
+    const Followers = targerUser.Followers.concat(user.id);
+    const Followings = user.Followings.concat(targerUser.id);
     await targerUser.update({
       Followers,
     });
@@ -244,5 +242,18 @@ export class UserService {
         Followings,
       }),
     };
+  }
+
+  async addHobbies(hobbie: string, userId: string) {
+    const user = await this.findOneById(userId);
+    if (user.Hobbies.length > 0) {
+      const hobbiesList = user.Hobbies.concat(hobbie);
+      await user.update({
+        Hobbies: hobbiesList,
+      });
+    }
+    await user.update('Hobbies', [hobbie]);
+    await user.save();
+    return { data: user };
   }
 }
