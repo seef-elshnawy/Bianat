@@ -48,6 +48,7 @@
     "express-session": "^1.18.0",
     "graphql": "^16.8.1",
     "graphql-scalars": "^1.22.4",
+    "graphql-subscriptions": "^2.0.0",
     "graphql-upload": "^12.0.0",
     "handlebars": "^4.7.8",
     "nodemailer": "^6.9.9",

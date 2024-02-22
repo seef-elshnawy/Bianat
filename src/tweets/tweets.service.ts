@@ -15,6 +15,7 @@ import { Queue } from 'bull';
 import { Op } from 'sequelize';
 import { Hashtag } from './entities/hashtag.entity';
 import { TweetResponse } from './tweet.response';
+import { PubSubEngine } from 'graphql-subscriptions';
 
 @Injectable()
 export class TweetsService {
@@ -23,6 +24,7 @@ export class TweetsService {
     @InjectQueue('tweet') private addQueue: Queue,
     @InjectModel(Files) private fileRepo: typeof Files,
     @InjectModel(Hashtag) private hashTag: typeof Hashtag,
+    @Inject('PUBSERVICE') private readonly pubSub: PubSubEngine,
     private helpers: HelperService,
   ) {}
   async addTweet(
@@ -38,10 +40,16 @@ export class TweetsService {
         });
         hashtag.map(async (l) => {
           console.log(l);
-          const HashTag = await this.hashTag.create({
-            HashTag: l,
+          const currentHashtag = await this.hashTag.findOne({
+            where: { HashTag: l },
           });
-          HashTag.$add('tweets', tweet.id);
+          if (!currentHashtag) {
+            const HashTag = await this.hashTag.create({
+              HashTag: l,
+            });
+            HashTag.$add('tweets', tweet.id);
+          }
+          currentHashtag.$add('tweets', tweet.id);
         });
         return { data: tweet };
       } catch (err) {

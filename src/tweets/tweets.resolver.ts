@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Subscription } from '@nestjs/graphql';
 import { TweetsService } from './tweets.service';
 import { Tweets } from './entities/tweet.entity';
 import { CreateTweetInput } from './dto/create-tweet.input';
@@ -8,16 +8,20 @@ import {
   TweetStringResponse,
   TweetsResponse,
 } from './tweet.response';
-import { UseGuards } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import { UserGuard } from 'src/user/guard';
 import { checkPolitics } from 'src/user/decorator/premission.decorator';
 import { Actions } from 'src/user/user.enum';
 import { CurrentUser } from 'src/auth/decorator';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { PubSubEngine } from 'graphql-subscriptions';
 
 @Resolver(() => Tweets)
 export class TweetsResolver {
-  constructor(private readonly tweetsService: TweetsService) {}
+  constructor(
+    private readonly tweetsService: TweetsService,
+    @Inject('PUBSERVICE') private readonly pubSub: PubSubEngine,
+  ) {}
 
   @UseGuards(UserGuard)
   @Mutation(() => TweetResponse)
@@ -26,7 +30,12 @@ export class TweetsResolver {
     @Args('hashtag', { type: () => Array(String) }) hashtag: string[] = null,
     @CurrentUser('id') userId: string,
   ) {
-    return await this.tweetsService.addTweet(createTweetInput, userId, hashtag);
+    const tweet = await this.tweetsService.addTweet(
+      createTweetInput,
+      userId,
+      hashtag,
+    );
+    return tweet;
   }
 
   @UseGuards(UserGuard)

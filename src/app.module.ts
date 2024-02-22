@@ -26,6 +26,7 @@ import { TweetsModule } from './tweets/tweets.module';
 import { Tweets } from './tweets/entities/tweet.entity';
 import { Hashtag } from './tweets/entities/hashtag.entity';
 import { TweetHashtag } from './tweets/entities/tweetHash.entity';
+import { PubServiceProvider } from './tweets/pubSub.provider';
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -36,6 +37,7 @@ import { TweetHashtag } from './tweets/entities/tweetHash.entity';
           'request.credentials': 'include',
         },
       },
+      installSubscriptionHandlers: true,
       context: ({ req }) => ({ req }),
 
       formatError: (error) => {

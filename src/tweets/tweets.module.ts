@@ -9,6 +9,8 @@ import { UserModule } from 'src/user/user.module';
 import { BullModule } from '@nestjs/bull';
 import { Files } from 'src/user/entity/files.entity';
 import { Hashtag } from './entities/hashtag.entity';
+import { PubServiceProvider } from './pubSub.provider';
+import { tweetSubResolver } from './tweet.subscription';
 
 @Module({
   imports: [
@@ -20,6 +22,11 @@ import { Hashtag } from './entities/hashtag.entity';
     HelpersModule,
     UserModule,
   ],
-  providers: [TweetsResolver, TweetsService],
+  providers: [
+    TweetsResolver,
+    TweetsService,
+    PubServiceProvider,
+    tweetSubResolver,
+  ],
 })
 export class TweetsModule {}
