@@ -32,7 +32,6 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { ImageUploader } from 'src/common/utils/utils';
 
 @Resolver(User)
-// @UseGuards(AuthGuard)
 export class UserResolver {
   constructor(
     private userService: UserService,
@@ -49,10 +48,9 @@ export class UserResolver {
   @Mutation(() => UserReponseString)
   async uploadImage(
     @Args('Image', { type: () => GraphQLUpload }) Image: FileUpload,
-    @Context('req') req: Request,
+    @CurrentUser('id') userId: string,
   ) {
-    //@ts-expect-error
-    return await this.userService.addImage(Image, req.user?.id);
+    return await this.userService.addImage(Image, userId);
   }
 
   @checkPolitics(Actions.SEND_EMAIL)
@@ -143,8 +141,4 @@ export class UserResolver {
   ) {
     return await this.userService.addHobbies(hobbie, userId);
   }
-  // @ResolveField()
-  // hasPassword(@Parent() user: User) {
-  //   return !!user.password;
-  // }
 }

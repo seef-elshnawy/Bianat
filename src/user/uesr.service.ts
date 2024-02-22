@@ -108,8 +108,6 @@ export class UserService {
   }
   async updateUser(id: string, dto: UserDto) {
     const user = await this.userRepo.findByPk(id);
-    // if (user.Role === Role.SUPER_ADMIN || Role.ADMIN)
-    //   return "you can't update admin";
     await user.update({ fullName: dto.fullName, age: dto.age });
     return user;
   }

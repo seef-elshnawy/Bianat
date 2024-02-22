@@ -5,17 +5,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { AuthGuard } from '@nestjs/passport';
-import { Observable } from 'rxjs';
 import { AuthService } from '../auth.service';
 import { UserService } from 'src/user/uesr.service';
 
 @Injectable()
 export class AuthGuards implements CanActivate {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     try {
       const ctx = GqlExecutionContext.create(context);

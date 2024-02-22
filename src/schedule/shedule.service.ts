@@ -17,11 +17,7 @@ export class ScheduleService {
     @InjectModel(User) private userRepo: typeof User,
     @InjectQueue('Cron') private addQue: Queue,
   ) {}
-  //   @Cron('*/10 * * * * *', { name: 'hello' })
-  //   sayHello() {
-  //     console.log('hello');
-  //     console.log(this.schedulerRejestery.getCronJob('hello').nextDate());
-  //   }
+
   @Cron(CronExpression.EVERY_DAY_AT_NOON, { name: 'delete' })
   async deleteUnUsedFiles() {
     const files = await this.fileRepo.findAll({

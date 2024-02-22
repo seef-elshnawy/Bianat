@@ -1,9 +1,5 @@
-import { Type } from '@nestjs/common';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { User } from '../../user/entity/user.entity';
-import { GraphQLNonNull, GraphQLScalarType } from 'graphql';
 import { ClassType } from 'type-graphql';
-import { Model, WhereOptions } from 'sequelize';
 
 export function staticRespone<TItem extends object>(
   TitemClass: ClassType<TItem> | ClassType<TItem>[],

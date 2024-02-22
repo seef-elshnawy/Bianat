@@ -8,9 +8,7 @@ import { MailService } from 'src/mail/mail.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto/Auth.dto';
 import { OtpUseCase } from 'src/otp/otp.enum';
-
 import { ConfigService } from '@nestjs/config';
-import { UserReponse } from 'src/user/user.response';
 
 @Injectable()
 export class AuthService {

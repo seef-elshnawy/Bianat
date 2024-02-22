@@ -14,6 +14,3 @@ export const CurrentUser = createParamDecorator(
   },
 );
 
-// export function typeValues<T, S>(name: T, password: S): string {
-//   return `hello world ${name} ${password}`;
-// }
