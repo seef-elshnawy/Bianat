@@ -14,6 +14,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { Op } from 'sequelize';
 import { Hashtag } from './entities/hashtag.entity';
+import { TweetResponse } from './tweet.response';
 
 @Injectable()
 export class TweetsService {
@@ -28,7 +29,7 @@ export class TweetsService {
     createTweetInput: CreateTweetInput,
     userId: string,
     hashtag: string[],
-  ) {
+  ): Promise<TweetResponse> {
     if (hashtag !== null) {
       try {
         const tweet = await this.tweetRepo.create({
@@ -40,7 +41,7 @@ export class TweetsService {
           const HashTag = await this.hashTag.create({
             HashTag: l,
           });
-          HashTag.$add('tweetId', tweet.id);
+          HashTag.$add('tweets', tweet.id);
         });
         return { data: tweet };
       } catch (err) {

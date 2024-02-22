@@ -12,7 +12,7 @@ import {
 import { Tweets } from './tweet.entity';
 import { TweetHashtag } from './tweetHash.entity';
 
-@Table({ tableName: 'Hashtag' })
+@Table({ tableName: 'Hashtags' })
 @ObjectType()
 export class Hashtag extends Model {
   @PrimaryKey
