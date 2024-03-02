@@ -27,7 +27,7 @@ export class AuthService {
       user.id,
       OtpUseCase.EMAIL_VERIFICATION,
     );
-    await this.mailService.sendUserConfirmation(dto, otp.OTPCode);
+    // await this.mailService.sendUserConfirmation(dto, otp.OTPCode);
     return { data: user };
   }
   async signIn(dto: AuthDto) {

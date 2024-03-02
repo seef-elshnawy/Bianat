@@ -19,6 +19,7 @@ import { ImageConsumer } from './user.consumer';
 import { producerService } from './user.producer';
 import { Files } from './entity/files.entity';
 import { UserRepo } from './user.repo';
+import { DataloaderModule } from 'src/dataloader/dataloader.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { UserRepo } from './user.repo';
     forwardRef(() => AuthModule),
     ConfigModule,
     OtpModule,
+    DataloaderModule,
     JwtModule.register({}),
     BullModule.registerQueue({
       configKey: 'config_queue',

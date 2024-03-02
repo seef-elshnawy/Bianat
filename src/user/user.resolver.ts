@@ -30,6 +30,7 @@ import { isAdmin } from './guard/isAdmin.guard';
 import { producerService } from './user.producer';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { ImageUploader } from 'src/common/utils/utils';
+import { GraphQLJSON } from 'graphql-scalars';
 
 @Resolver(User)
 export class UserResolver {
@@ -140,5 +141,11 @@ export class UserResolver {
     @Args('hobbie', { type: () => String }) hobbie: string,
   ) {
     return await this.userService.addHobbies(hobbie, userId);
+  }
+
+  @ResolveField(() => GraphQLJSON, { nullable: true })
+  async getTweetsByUserId(@Parent() user: User) {
+    const { id: userId } = user;
+    return await this.userService.getTweetsByUserId(userId);
   }
 }

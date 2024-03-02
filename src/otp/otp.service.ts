@@ -8,7 +8,8 @@ import { OtpUseCase } from './otp.enum';
 export class OtpService {
   constructor(@InjectModel(OTP) private otpRepo: Repository<OTP>) {}
   async generateOTP(userId: string, useCase: OtpUseCase) {
-    const code = Math.floor(10000000 + Math.random() * 90000000);
+    // const code = Math.floor(10000000 + Math.random() * 90000000);
+    const code = 12345;
     const expireIn = new Date().setTime(new Date().getTime() + 60 * 60 * 1000);
     const OTP = await this.otpRepo.create({
       OTPCode: code,

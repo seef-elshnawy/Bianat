@@ -30,6 +30,7 @@ import { FileUpload } from 'graphql-upload';
 import sharp from 'sharp';
 import { Files } from './entity/files.entity';
 import { UserRepo } from './user.repo';
+import { DataloaderService } from 'src/dataloader/dataloader.service';
 
 @Injectable()
 export class UserService {
@@ -43,6 +44,7 @@ export class UserService {
     private mailService: MailService,
     private jwt: JwtService,
     private config: ConfigService,
+    private dataloader: DataloaderService,
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
   async createUser(dto: UserDto): Promise<User> {
@@ -253,5 +255,8 @@ export class UserService {
     await user.update('Hobbies', [hobbie]);
     await user.save();
     return { data: user };
+  }
+  async getTweetsByUserId(id: string) {
+   return await this.dataloader.getTweetLoader().tweets.load(id) 
   }
 }

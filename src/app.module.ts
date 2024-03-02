@@ -27,6 +27,7 @@ import { Tweets } from './tweets/entities/tweet.entity';
 import { Hashtag } from './tweets/entities/hashtag.entity';
 import { TweetHashtag } from './tweets/entities/tweetHash.entity';
 import { PubServiceProvider } from './tweets/pubSub.provider';
+import { DataloaderModule } from './dataloader/dataloader.module';
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -82,6 +83,7 @@ import { PubServiceProvider } from './tweets/pubSub.provider';
     OtpModule,
     SchedulesModule,
     TweetsModule,
+    DataloaderModule,
   ],
   providers: [
     {
