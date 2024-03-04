@@ -27,22 +27,31 @@ import { Tweets } from './tweets/entities/tweet.entity';
 import { Hashtag } from './tweets/entities/hashtag.entity';
 import { TweetHashtag } from './tweets/entities/tweetHash.entity';
 import { PubServiceProvider } from './tweets/pubSub.provider';
+import { DataloaderModule } from './dataloader/dataloader.module';
+import { TweetDataLoaderService } from './dataloader/tweets-dataloader.service';
 @Module({
   imports: [
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: true,
-      playground: {
-        settings: {
-          'request.credentials': 'include',
-        },
+      imports: [DataloaderModule],
+      useFactory: (dataloaderService: TweetDataLoaderService) => {
+        return {
+          autoSchemaFile: true,
+          playground: {
+            settings: {
+              'request.credentials': 'include',
+            },
+          },
+          installSubscriptionHandlers: true,
+          context: ({ req }) => ({
+            req,
+          }),
+          formatError: (error) => {
+            return handelError(error);
+          },
+        };
       },
-      installSubscriptionHandlers: true,
-      context: ({ req }) => ({ req }),
-
-      formatError: (error) => {
-        return handelError(error);
-      },
+      inject: [TweetDataLoaderService],
     }),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -82,6 +91,7 @@ import { PubServiceProvider } from './tweets/pubSub.provider';
     OtpModule,
     SchedulesModule,
     TweetsModule,
+    DataloaderModule,
   ],
   providers: [
     {

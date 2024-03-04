@@ -19,10 +19,14 @@ import { ImageConsumer } from './user.consumer';
 import { producerService } from './user.producer';
 import { Files } from './entity/files.entity';
 import { UserRepo } from './user.repo';
+import { Tweets } from 'src/tweets/entities/tweet.entity';
+import { DataloaderModule } from 'src/dataloader/dataloader.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { dataloaderInterceptor } from 'src/dataloader/dataloader.interceptor';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([User, OTP, SecurityGroub, Files]),
+    SequelizeModule.forFeature([User, Tweets, OTP, SecurityGroub, Files]),
     HelpersModule,
     MailModule,
     forwardRef(() => AuthModule),
@@ -33,6 +37,7 @@ import { UserRepo } from './user.repo';
       configKey: 'config_queue',
       name: 'user',
     }),
+    forwardRef(() => DataloaderModule),
   ],
   providers: [
     UserService,
@@ -45,7 +50,18 @@ import { UserRepo } from './user.repo';
     ImageConsumer,
     producerService,
     UserRepo,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: dataloaderInterceptor,
+    },
   ],
-  exports: [UserService, UserResolver, OtpService, ConfigService, UserGuard],
+  exports: [
+    UserService,
+    UserResolver,
+    OtpService,
+    ConfigService,
+    UserGuard,
+    UserRepo,
+  ],
 })
 export class UserModule {}

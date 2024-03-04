@@ -30,6 +30,9 @@ import { FileUpload } from 'graphql-upload';
 import sharp from 'sharp';
 import { Files } from './entity/files.entity';
 import { UserRepo } from './user.repo';
+import { Tweets } from 'src/tweets/entities/tweet.entity';
+import { TweetDataLoaderService } from 'src/dataloader/tweets-dataloader.service';
+import DataLoader from 'dataloader';
 
 @Injectable()
 export class UserService {
@@ -43,6 +46,7 @@ export class UserService {
     private mailService: MailService,
     private jwt: JwtService,
     private config: ConfigService,
+    private dataloader: TweetDataLoaderService,
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
   async createUser(dto: UserDto): Promise<User> {
@@ -253,5 +257,26 @@ export class UserService {
     await user.update('Hobbies', [hobbie]);
     await user.save();
     return { data: user };
+  }
+
+  // async getTweetsByUser(userIds: string[]) {
+  //   const values = await this.userRepo.getAllTweetsByUser(userIds);
+  //   return values;
+  // }
+
+  // async getTweetsUserByBatch(userIds: string[]) {
+  //   const tweets = await this.getTweetsByUser(userIds);
+  //   const mappedResults = await this.mapResultsToIds(userIds, tweets);
+  //   return mappedResults;
+  // }
+  // async mapResultsToIds(userIds: string[], tweets: Tweets[]) {
+  //   const values = userIds.map(async (id) => {
+  //     return tweets.filter((tweet) => tweet.userId === id);
+  //   });
+  //   return values;
+  // }
+  async getTweetsByUser(userId: string, loaders) {
+    const loader = loaders.load(userId);
+    return loader;
   }
 }

@@ -11,6 +11,7 @@ import { Files } from 'src/user/entity/files.entity';
 import { Hashtag } from './entities/hashtag.entity';
 import { PubServiceProvider } from './pubSub.provider';
 import { tweetSubResolver } from './tweet.subscription';
+import { DataloaderModule } from 'src/dataloader/dataloader.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { tweetSubResolver } from './tweet.subscription';
     }),
     HelpersModule,
     UserModule,
+    DataloaderModule
   ],
   providers: [
     TweetsResolver,

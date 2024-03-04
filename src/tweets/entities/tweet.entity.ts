@@ -14,6 +14,7 @@ import {
 import { User } from 'src/user/entity/user.entity';
 import { Hashtag } from './hashtag.entity';
 import { TweetHashtag } from './tweetHash.entity';
+import { isNullableType } from 'graphql';
 
 @Table({ tableName: 'Tweets' })
 @ObjectType()

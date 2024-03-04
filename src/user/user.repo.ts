@@ -4,10 +4,14 @@ import { User } from './entity/user.entity';
 import { PageInfo } from 'src/common/utils/responseType';
 import { DestroyOptions, FindOptions, WhereOptions } from 'sequelize';
 import { Model } from 'sequelize-typescript';
+import { Tweets } from 'src/tweets/entities/tweet.entity';
 
 @Injectable()
 export class UserRepo extends User {
-  constructor(@InjectModel(User) private model: typeof User) {
+  constructor(
+    @InjectModel(User) private model: typeof User,
+    @InjectModel(Tweets) private tweet: typeof Tweets,
+  ) {
     super();
   }
 
@@ -18,8 +22,8 @@ export class UserRepo extends User {
     });
     return { data: users, pagination };
   }
-  async findAll() {
-    return await this.model.findAll();
+  async findAll(where?: FindOptions) {
+    return await this.model.findAll(where);
   }
 
   async findById(id: number): Promise<User> {
@@ -37,5 +41,13 @@ export class UserRepo extends User {
   }
   async findOne(where: FindOptions) {
     return this.model.findOne(where);
+  }
+  async getAllTweetsByUser(userIds: string[]) {
+    const tweetsAll = await this.tweet.findAll();
+    const values = tweetsAll.filter((tweets) => {
+      return userIds.includes(tweets.userId);
+    });
+    if (!values) return [];
+    return values;
   }
 }

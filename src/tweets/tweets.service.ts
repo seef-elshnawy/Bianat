@@ -16,6 +16,7 @@ import { Op } from 'sequelize';
 import { Hashtag } from './entities/hashtag.entity';
 import { TweetResponse } from './tweet.response';
 import { PubSubEngine } from 'graphql-subscriptions';
+import { TweetDataLoaderService } from 'src/dataloader/tweets-dataloader.service';
 
 @Injectable()
 export class TweetsService {
@@ -25,6 +26,7 @@ export class TweetsService {
     @InjectModel(Files) private fileRepo: typeof Files,
     @InjectModel(Hashtag) private hashTag: typeof Hashtag,
     @Inject('PUBSERVICE') private readonly pubSub: PubSubEngine,
+    private dataloader: TweetDataLoaderService,
     private helpers: HelperService,
   ) {}
   async addTweet(

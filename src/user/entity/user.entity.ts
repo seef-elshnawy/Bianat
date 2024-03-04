@@ -4,10 +4,10 @@ import {
   Column,
   DataType,
   PrimaryKey,
-  Model,
   Table,
   HasMany,
   HasOne,
+  Model,
 } from 'sequelize-typescript';
 import { enumColumn } from 'src/common/utils/utils';
 import { OTP } from 'src/otp/model/otp.model';

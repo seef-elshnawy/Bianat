@@ -1,6 +1,7 @@
 import {
   Args,
   Context,
+  GqlExecutionContext,
   Mutation,
   ObjectType,
   Parent,
@@ -29,7 +30,9 @@ import { Actions } from './user.enum';
 import { isAdmin } from './guard/isAdmin.guard';
 import { producerService } from './user.producer';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { ImageUploader } from 'src/common/utils/utils';
+import { GraphQLJSON } from 'graphql-scalars';
+import { TweetDataLoaderService } from 'src/dataloader/tweets-dataloader.service';
+import { Loader } from 'src/dataloader/decorator/dataloader.decorator';
 
 @Resolver(User)
 export class UserResolver {
@@ -140,5 +143,21 @@ export class UserResolver {
     @Args('hobbie', { type: () => String }) hobbie: string,
   ) {
     return await this.userService.addHobbies(hobbie, userId);
+  }
+  @Query(() => [User])
+  async Users() {
+    return await this.userService.getAllUser(1, 10000);
+  }
+
+  @ResolveField(() => GraphQLJSON)
+  async getTweets(
+    @Parent() user: User,
+    @Context() ctx,
+    @Loader(TweetDataLoaderService) tweetLoader,
+  ) {
+    const { id: userId } = user;
+    const { dataloader } = ctx.req;
+    console.log(tweetLoader, 'tweetLoader');
+    return await this.userService.getTweetsByUser(userId, tweetLoader);
   }
 }
